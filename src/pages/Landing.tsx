@@ -76,7 +76,7 @@ export const Landing = () => {
   return (
     <Layout.Inset>
       <div className="Landing-container">
-        <Heading1>Connect with a wallet</Heading1>
+        <Heading1>Connect your wallets</Heading1>
 
         <div className="WalletButtons-container">
           {Object.keys(wallets).map((walletKey) => {

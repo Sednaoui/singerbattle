@@ -3,10 +3,10 @@ import { useDispatch } from "react-redux";
 import {
   Button,
   Heading3,
-  TextLink,
+  // TextLink,
   Icon,
   Modal,
-  InfoBlock,
+  // InfoBlock,
 } from "@stellar/design-system";
 
 import { SendTransactionFlow } from "components/SendTransaction/SendTransactionFlow";
@@ -20,6 +20,21 @@ import { useRedux } from "hooks/useRedux";
 import { ActionStatus } from "types/types.d";
 
 import "./styles.scss";
+import { getInfo } from "./hello";
+
+const chooseRandom = (arr: any, num = 1) => {
+  const res = [];
+  for (let i = 0; i < num; ) {
+    const random = Math.floor(Math.random() * arr.length);
+    if (res.indexOf(arr[random]) !== -1) {
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+    res.push(arr[random]);
+    i++;
+  }
+  return res;
+};
 
 export const BalanceInfo = () => {
   const dispatch = useDispatch();
@@ -45,6 +60,29 @@ export const BalanceInfo = () => {
       dispatch(startAccountWatcherAction(publicAddress));
     }
   }, [dispatch, publicAddress, accountStatus, isAccountWatcherStarted]);
+
+  const [imageURL, setImageURL] = useState("");
+
+  const getmyInfo = async () => {
+    if (
+      publicAddress &&
+      accountStatus === ActionStatus.SUCCESS &&
+      !isAccountWatcherStarted
+    ) {
+      const response = await getInfo();
+
+      console.log(response, "response");
+
+      const balances = response.data.balances;
+
+      console.log(chooseRandom(balances), "random number!");
+      setImageURL(
+        "https://ipfs.io/ipfs/QmTXuiZMrWWmMZZRwT6monnBUWkqLLPxCCm2DRp7vwqJge",
+      );
+    }
+  };
+
+  getmyInfo();
 
   let nativeBalance = "0";
 
@@ -87,7 +125,6 @@ export const BalanceInfo = () => {
           >
             Send
           </Button>
-
           <Button
             onClick={() => {
               setIsReceiveTxModalVisible(true);
@@ -99,8 +136,17 @@ export const BalanceInfo = () => {
           </Button>
         </div>
       </div>
+      <h1>Your randomly chosen NFT:</h1>
+      <img
+        src={imageURL}
+        alt="NFT"
+        style={{
+          width: 200,
+          height: 200,
+        }}
+      />
 
-      {isUnfunded && (
+      {/* {isUnfunded && (
         <div className="BalanceInfo__unfunded">
           <Heading3>Your Stellar Public Key</Heading3>
           <code data-break>{publicAddress}</code>
@@ -113,7 +159,7 @@ export const BalanceInfo = () => {
             to the Stellar public key displayed above.
           </InfoBlock>
         </div>
-      )}
+      )} */}
 
       <Modal
         visible={isSendTxModalVisible || isReceiveTxModalVisible}
